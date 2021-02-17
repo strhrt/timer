@@ -18,10 +18,10 @@ export default {
     return {
       timer: null,
       isStarted: false,
-      minutes: 1,
-      seconds: 10,
-      milliseconds: 9,
-      duration: 70009
+      minutes: 0,
+      seconds: 2,
+      milliseconds: 0
+      // duration: 70009
     }
   },
   computed: {
@@ -35,12 +35,11 @@ export default {
       if (this.milliseconds < 10) return `00${this.milliseconds}`
       if (this.milliseconds < 100) return `0${this.milliseconds}`
       return this.milliseconds
-      // return this.milliseconds < 10 ? `0${this.milliseconds}` : this.milliseconds
+    },
+    duration() {
+      console.log(this.minutes, this.seconds, this.milliseconds)
+      return this.minutes * 60000 + this.seconds * 1000 + this.milliseconds
     }
-    // duration() {
-    //   console.log(this.minutes, this.seconds, this.milliseconds)
-    //   return this.minutes * 60000 + this.seconds * 1000 + this.milliseconds
-    // }
   },
   beforeDestroy() {
     this.pauseTimer()
@@ -53,18 +52,21 @@ export default {
     },
     startTimer() {
       console.log('start')
-      // const interval = 0.01
+      let time = this.duration
 
       this.isStarted = true
       console.log(this.duration)
 
       this.timer = setInterval(() => {
-        if (!this.duration) this.stopTimer()
+        console.log(time)
 
-        this.duration -= 11
-        this.minutes = Math.floor(this.duration / 60000)
-        this.seconds = Math.floor((this.duration / 1000) % 60)
-        this.milliseconds = Math.round(this.duration % 1000)
+        time -= 11
+        this.minutes = Math.floor(time / 60000)
+        this.seconds = Math.floor((time / 1000) % 60)
+        this.milliseconds = Math.round(time % 1000)
+        if (time < 11) {
+          this.stopTimer()
+        }
       }, 11)
     },
     // setTime() {
