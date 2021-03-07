@@ -1,31 +1,127 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <div class="timer">
+      <div class="timer__time">{{ humanMinutes }}.{{ humanSeconds }}.{{ humanMilliseconds }}</div>
+      <div class="timer__buttons">
+        <i v-if="isStarted" class="material-icons" @click="pauseTimer">pause</i>
+        <i v-else class="material-icons" @click="startTimer">play_arrow</i>
+        <i class="material-icons" @click="addMinute">add</i>
+        <i class="material-icons" @click="removeMinute">remove</i>
+        <i class="material-icons" @click="stopTimer">stop</i>
+      </div>
     </div>
-    <router-view/>
   </div>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      timer: null,
+      isStarted: false,
+      minutes: 0,
+      seconds: 2,
+      milliseconds: 0
+      // duration: 70009
+    }
+  },
+  computed: {
+    humanMinutes() {
+      return this.minutes < 10 ? `0${this.minutes}` : this.minutes
+    },
+    humanSeconds() {
+      return this.seconds < 10 ? `0${this.seconds}` : this.seconds
+    },
+    humanMilliseconds() {
+      if (this.milliseconds < 10) return `00${this.milliseconds}`
+      if (this.milliseconds < 100) return `0${this.milliseconds}`
+      return this.milliseconds
+    },
+    duration() {
+      console.log(this.minutes, this.seconds, this.milliseconds)
+      return this.minutes * 60000 + this.seconds * 1000 + this.milliseconds
+    }
+  },
+  beforeDestroy() {
+    this.pauseTimer()
+  },
+  methods: {
+    pauseTimer() {
+      console.log('pause')
+      clearInterval(this.timer)
+      this.isStarted = false
+    },
+    startTimer() {
+      console.log('start')
+      let time = this.duration
+
+      this.isStarted = true
+      console.log(this.duration)
+
+      this.timer = setInterval(() => {
+        console.log(time)
+
+        time -= 11
+        this.minutes = Math.floor(time / 60000)
+        this.seconds = Math.floor((time / 1000) % 60)
+        this.milliseconds = Math.round(time % 1000)
+        if (time < 11) {
+          this.stopTimer()
+        }
+      }, 11)
+    },
+    // setTime() {
+    //   console.log('test')
+    // },
+    addMinute() {
+      console.log('plus')
+    },
+    removeMinute() {
+      console.log('minus')
+    },
+    stopTimer() {
+      console.log('test')
+      clearInterval(this.timer)
+      this.isStarted = false
+    }
+  }
+}
+</script>
 
 <style lang="scss">
+* {
+  margin: 0;
+  padding: 0;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+  font-weight: bold;
+  color: #202830;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
 }
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+.timer {
+  height: 300px;
+  background: yellow;
+  width: 360px;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  &__time {
+    font-size: 4rem;
+  }
+  &__buttons {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    .material-icons {
+      cursor: pointer;
+      margin: 0 0.6rem;
+      font-size: 2.6rem;
     }
   }
 }
