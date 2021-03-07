@@ -24,8 +24,9 @@ export default {
     return {
       timer: null,
       isStarted: false,
-      minutes: 123,
-      seconds: 5,
+      // default values
+      minutes: 0,
+      seconds: 2,
       milliseconds: 0
     }
   },
@@ -37,50 +38,52 @@ export default {
       return this.seconds < 10 ? `0${this.seconds}` : this.seconds
     },
     humanMilliseconds() {
-      if (this.milliseconds < 10) return `0${this.milliseconds}`
+      if (this.milliseconds < 10) return `0${this.milliseconds}` // correct display when 0
       if (this.milliseconds >= 100) return Math.floor(this.milliseconds / 10)
       return this.milliseconds
     },
     duration() {
-      console.log(this.minutes, this.seconds, this.milliseconds)
       return this.minutes * 60000 + this.seconds * 1000 + this.milliseconds
     }
   },
+  watch: {},
   beforeDestroy() {
     this.pauseTimer()
   },
   methods: {
-    pauseTimer() {
-      console.log('pause')
-      clearInterval(this.timer)
-      this.isStarted = false
-    },
     startTimer() {
-      console.log('start')
-      let time = this.duration
-      if (!time) return
+      if (!this.duration) return
       this.isStarted = true
 
       this.timer = setInterval(() => {
-        time -= 10
+        const time = this.duration - 10
+
         this.minutes = Math.floor(time / 60000)
         this.seconds = Math.floor((time / 1000) % 60)
         this.milliseconds = Math.round(time % 1000)
-        if (time < 10) {
-          this.stopTimer()
-        }
+        // stop when duration is 0
+        if (!time) this.clearTimer()
       }, 10)
     },
-    addMinute() {
-      console.log('plus')
+    pauseTimer() {
+      this.clearTimer()
     },
-    removeMinute() {
-      console.log('minus')
-    },
-    stopTimer() {
-      console.log('test')
+    clearTimer() {
       clearInterval(this.timer)
       this.isStarted = false
+    },
+    addMinute() {
+      this.minutes += 1
+    },
+    removeMinute() {
+      if (this.minutes > 0) this.minutes -= 1
+    },
+    stopTimer() {
+      this.clearTimer()
+      // reset to default values
+      this.minutes = 10
+      this.seconds = 0
+      this.milliseconds = 0
     }
   }
 }
