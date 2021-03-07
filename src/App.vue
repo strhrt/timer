@@ -1,7 +1,13 @@
 <template>
   <div id="app">
     <div class="timer">
-      <div class="timer__time">{{ humanMinutes }}.{{ humanSeconds }}.{{ humanMilliseconds }}</div>
+      <div class="timer__time">
+        <p id="min">{{ humanMinutes }}</p>
+        .
+        <p id="sec">{{ humanSeconds }}</p>
+        .
+        <p id="milli">{{ humanMilliseconds }}</p>
+      </div>
       <div class="timer__buttons">
         <i v-if="isStarted" class="material-icons" @click="pauseTimer">pause</i>
         <i v-else class="material-icons" @click="startTimer">play_arrow</i>
@@ -18,10 +24,9 @@ export default {
     return {
       timer: null,
       isStarted: false,
-      minutes: 0,
-      seconds: 2,
+      minutes: 123,
+      seconds: 5,
       milliseconds: 0
-      // duration: 70009
     }
   },
   computed: {
@@ -32,8 +37,8 @@ export default {
       return this.seconds < 10 ? `0${this.seconds}` : this.seconds
     },
     humanMilliseconds() {
-      if (this.milliseconds < 10) return `00${this.milliseconds}`
-      if (this.milliseconds < 100) return `0${this.milliseconds}`
+      if (this.milliseconds < 10) return `0${this.milliseconds}`
+      if (this.milliseconds >= 100) return Math.floor(this.milliseconds / 10)
       return this.milliseconds
     },
     duration() {
@@ -53,25 +58,19 @@ export default {
     startTimer() {
       console.log('start')
       let time = this.duration
-
+      if (!time) return
       this.isStarted = true
-      console.log(this.duration)
 
       this.timer = setInterval(() => {
-        console.log(time)
-
-        time -= 11
+        time -= 10
         this.minutes = Math.floor(time / 60000)
         this.seconds = Math.floor((time / 1000) % 60)
         this.milliseconds = Math.round(time % 1000)
-        if (time < 11) {
+        if (time < 10) {
           this.stopTimer()
         }
-      }, 11)
+      }, 10)
     },
-    // setTime() {
-    //   console.log('test')
-    // },
     addMinute() {
       console.log('plus')
     },
@@ -96,6 +95,8 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   font-weight: bold;
   color: #202830;
+  background-color: #383a3b;
+
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -113,6 +114,7 @@ export default {
   justify-content: center;
   &__time {
     font-size: 4rem;
+    display: flex; //temporary
   }
   &__buttons {
     display: flex;
