@@ -25,8 +25,8 @@ export default {
       timer: null,
       isStarted: false,
       // default values
-      minutes: 0,
-      seconds: 2,
+      minutes: 10,
+      seconds: 0,
       milliseconds: 0
     }
   },
