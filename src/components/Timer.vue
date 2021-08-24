@@ -12,38 +12,36 @@
       <i v-else class="material-icons" @click="startTimer">play_arrow</i>
       <i class="material-icons" @click="addMinute">add</i>
       <i class="material-icons" @click="removeMinute">remove</i>
-      <!-- change stop to refresh icon  ????? -->
       <i class="material-icons" @click="stopTimer">stop</i>
     </div>
   </div>
 </template>
 
 <script>
+const DEFAULT_TIME_IN_MILLISECONDS = 600000
+const MILLISECONDS_IN_ONE_MINUTE = 60000
+
 export default {
   data() {
     return {
       timer: null,
       isStarted: false,
-      // default values
-      minutes: 10,
-      seconds: 0,
-      milliseconds: 0
+      duration: DEFAULT_TIME_IN_MILLISECONDS,
+      startTime: null
     }
   },
   computed: {
     humanMinutes() {
-      return this.minutes < 10 ? `0${this.minutes}` : this.minutes
+      const minutes = Math.floor(this.duration / MILLISECONDS_IN_ONE_MINUTE)
+      return minutes < 10 ? `0${minutes}` : minutes
     },
     humanSeconds() {
-      return this.seconds < 10 ? `0${this.seconds}` : this.seconds
+      const seconds = Math.floor((this.duration / 1000) % 60)
+      return seconds < 10 ? `0${seconds}` : seconds
     },
     humanMilliseconds() {
-      if (this.milliseconds < 10) return `0${this.milliseconds}` // correct display when 0
-      if (this.milliseconds >= 100) return Math.floor(this.milliseconds / 10) // show only two digits
-      return this.milliseconds
-    },
-    duration() {
-      return this.minutes * 60000 + this.seconds * 1000 + this.milliseconds
+      const milliseconds = Math.round(this.duration % 100)
+      return milliseconds < 10 ? `0${milliseconds}` : milliseconds
     }
   },
   watch: {},
@@ -52,38 +50,50 @@ export default {
   },
   methods: {
     startTimer() {
-      if (!this.duration) return
+      this.startTime = Date.now()
+      this.test()
+    },
+    test() {
       this.isStarted = true
 
-      this.timer = setInterval(() => {
-        const time = this.duration - 10
+      if (!this.duration) {
+        this.clearTimer()
+        return
+      }
 
-        this.minutes = Math.floor(time / 60000)
-        this.seconds = Math.floor((time / 1000) % 60)
-        this.milliseconds = Math.round(time % 1000)
-        // stop when duration is 0
-        if (!time) this.clearTimer()
+      this.duration -= 10
+
+      const timerId = setTimeout(() => {
+        if (this.timer === timerId) {
+          this.test()
+        } else {
+          this.timer = null
+        }
       }, 10)
+
+      this.timer = timerId
     },
     pauseTimer() {
       this.clearTimer()
     },
     clearTimer() {
       clearInterval(this.timer)
+      this.timer = null
       this.isStarted = false
     },
     addMinute() {
-      this.minutes += 1
+      this.duration += MILLISECONDS_IN_ONE_MINUTE
     },
     removeMinute() {
-      if (this.minutes > 0) this.minutes -= 1
+      if (this.duration > MILLISECONDS_IN_ONE_MINUTE) this.duration -= MILLISECONDS_IN_ONE_MINUTE
+      else this.duration = 0
     },
     stopTimer() {
       this.clearTimer()
-      // reset to default values
-      this.minutes = 10
-      this.seconds = 0
-      this.milliseconds = 0
+      this.resetValuesToDefault()
+    },
+    resetValuesToDefault() {
+      this.duration = DEFAULT_TIME_IN_MILLISECONDS
     }
   }
 }
