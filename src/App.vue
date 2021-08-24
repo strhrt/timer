@@ -1,15 +1,12 @@
 <template>
   <div id="app">
-    <!-- <header class="header">header</header> -->
     <timer />
-    <!-- <MainPage /> -->
   </div>
 </template>
 <script>
 export default {
   components: {
     timer: () => import('@/components/Timer')
-    //   MainPage: () => import('@/views/MainPage')
   }
 }
 </script>
