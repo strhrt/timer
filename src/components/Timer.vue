@@ -9,7 +9,7 @@
     </div>
     <div class="timer__buttons">
       <i v-if="isStarted" class="material-icons" @click="pauseTimer">pause</i>
-      <i v-else class="material-icons" @click="startTimer">play_arrow</i>
+      <i v-else class="material-icons" @click="startTimerHandler">play_arrow</i>
       <i class="material-icons" @click="addMinute">add</i>
       <i class="material-icons" @click="removeMinute">remove</i>
       <i class="material-icons" @click="stopTimer">stop</i>
@@ -49,11 +49,11 @@ export default {
     this.pauseTimer()
   },
   methods: {
-    startTimer() {
+    startTimerHandler() {
       this.startTime = Date.now()
-      this.test()
+      this.startTimer()
     },
-    test() {
+    startTimer() {
       this.isStarted = true
 
       if (!this.duration) {
@@ -65,7 +65,7 @@ export default {
 
       const timerId = setTimeout(() => {
         if (this.timer === timerId) {
-          this.test()
+          this.startTimer()
         } else {
           this.timer = null
         }
