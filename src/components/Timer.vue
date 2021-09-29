@@ -26,8 +26,7 @@ export default {
     return {
       timer: null,
       isStarted: false,
-      duration: DEFAULT_TIME_IN_MILLISECONDS,
-      startTime: null
+      duration: DEFAULT_TIME_IN_MILLISECONDS
     }
   },
   computed: {
@@ -40,8 +39,9 @@ export default {
       return seconds < 10 ? `0${seconds}` : seconds
     },
     humanMilliseconds() {
-      const milliseconds = Math.round(this.duration % 100)
-      return milliseconds < 10 ? `0${milliseconds}` : milliseconds
+      const milliseconds = Math.round(this.duration % 1000)
+      if (milliseconds === 0) return '00'
+      return milliseconds < 100 ? milliseconds : Math.floor(milliseconds / 10)
     }
   },
   watch: {},
@@ -50,7 +50,6 @@ export default {
   },
   methods: {
     startTimerHandler() {
-      this.startTime = Date.now()
       this.startTimer()
     },
     startTimer() {
@@ -60,8 +59,6 @@ export default {
         this.clearTimer()
         return
       }
-
-      this.duration -= 10
 
       const timerId = setTimeout(() => {
         if (this.timer === timerId) {
@@ -110,7 +107,10 @@ export default {
   justify-content: center;
   &__time {
     font-size: 4rem;
-    display: flex; //temporary
+    display: flex;
+    p {
+      min-width: 74px;
+    }
   }
   &__buttons {
     display: flex;
