@@ -6,7 +6,7 @@
 <script>
 export default {
   components: {
-    timer: () => import('@/components/Timer')
+    timer: () => import('@/components/Timer.vue')
   }
 }
 </script>
