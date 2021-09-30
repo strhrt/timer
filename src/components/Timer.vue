@@ -44,7 +44,6 @@ export default {
       return milliseconds < 100 ? milliseconds : Math.floor(milliseconds / 10)
     }
   },
-  watch: {},
   beforeDestroy() {
     this.pauseTimer()
   },
@@ -59,6 +58,7 @@ export default {
         this.clearTimer()
         return
       }
+      this.duration -= 10
 
       const timerId = setTimeout(() => {
         if (this.timer === timerId) {
